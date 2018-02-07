@@ -105,6 +105,7 @@ public class DataServlet extends WebSocketServlet implements VehicleListener {
       for (Vehicle vehicle : vehicles) {
         JSONObject obj = new JSONObject();
         obj.put("id", vehicle.getId());
+        obj.put("label", vehicle.getLabel());
         obj.put("lat", vehicle.getLat());
         obj.put("lon", vehicle.getLon());
         obj.put("lastUpdate", vehicle.getLastUpdate());

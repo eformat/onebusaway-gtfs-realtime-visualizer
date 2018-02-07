@@ -25,7 +25,7 @@ function Init() {
 		var map_style = [ {
 			elementType : "labels",
 			stylers : [ {
-				visibility : "off"
+				visibility : "on"
 			} ]
 		}, {
 			stylers : [ {
@@ -34,7 +34,7 @@ function Init() {
 		} ];
 		var map_canvas = document.getElementById("map_canvas");
 		var myOptions = {
-			center : new google.maps.LatLng(42.349, -71.059),
+			center : new google.maps.LatLng(-43.5365304,169.8149558),
 			zoom : 8,
 			styles : map_style,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
@@ -101,7 +101,8 @@ function Init() {
 			icon : icon,
 			map : map,
 			position : point,
-			title : 'id=' + v_data.id
+			title : 'id=' + v_data.id,
+			label: v_data.label
 		};
 		var polyline_opts = {
 			clickable : false,
@@ -114,6 +115,7 @@ function Init() {
 		};
 		return {
 			id : v_data.id,
+			label: v_data.label,
 			marker : new google.maps.Marker(marker_opts),
 			polyline : new google.maps.Polyline(polyline_opts),
 			path : path,

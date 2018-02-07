@@ -34,6 +34,8 @@ public class VisualizerMain {
 
   private static final String ARG_VEHICLE_POSITIONS_URL = "vehiclePositionsUrl";
   
+  private static final String ARG_API_KEY = "apiKey";
+    
   public static void main(String[] args) throws Exception {
     VisualizerMain m = new VisualizerMain();
     m.run(args);
@@ -57,10 +59,10 @@ public class VisualizerMain {
     Injector injector = Guice.createInjector(modules);
     injector.injectMembers(this);
 
-    VisualizerService service = injector.getInstance(VisualizerService.class);
-    service.setVehiclePositionsUri(new URI(
-        cli.getOptionValue(ARG_VEHICLE_POSITIONS_URL)));
-    injector.getInstance(VisualizerServer.class);
+    VisualizerService service = injector.getInstance(VisualizerService.class);    
+        service.setVehiclePositionsUri(new URI(cli.getOptionValue(ARG_VEHICLE_POSITIONS_URL)),
+                cli.getOptionValue(ARG_API_KEY));
+        injector.getInstance(VisualizerServer.class);
 
     LifecycleService lifecycleService = injector.getInstance(LifecycleService.class);
     lifecycleService.start();
@@ -72,5 +74,6 @@ public class VisualizerMain {
 
   private void buildOptions(Options options) {
     options.addOption(ARG_VEHICLE_POSITIONS_URL, true, "");
+    options.addOption(ARG_API_KEY, true, "");
   }
 }

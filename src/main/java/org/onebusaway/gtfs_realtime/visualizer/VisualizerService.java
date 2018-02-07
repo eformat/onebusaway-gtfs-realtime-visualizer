@@ -16,6 +16,7 @@
 package org.onebusaway.gtfs_realtime.visualizer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedHeader;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtime.Position;
+import com.google.transit.realtime.GtfsRealtime.TripDescriptor;
 import com.google.transit.realtime.GtfsRealtime.VehicleDescriptor;
 import com.google.transit.realtime.GtfsRealtime.VehiclePosition;
 
@@ -54,7 +56,9 @@ public class VisualizerService {
   private static final Logger _log = LoggerFactory.getLogger(VisualizerService.class);
 
   private URI _vehiclePositionsUri;
-
+  
+  private String _apiKey = new String("");
+    
   private ScheduledExecutorService _executor;
 
   private WebSocketClientFactory _webSocketFactory;
@@ -79,8 +83,9 @@ public class VisualizerService {
 
   private long _mostRecentRefresh = -1;
 
-  public void setVehiclePositionsUri(URI uri) {
+  public void setVehiclePositionsUri(URI uri, String apiKey) {
     _vehiclePositionsUri = uri;
+    _apiKey = apiKey;
   }
 
   @PostConstruct
@@ -134,7 +139,18 @@ public class VisualizerService {
     _log.info("refreshing vehicle positions");
 
     URL url = _vehiclePositionsUri.toURL();
-    FeedMessage feed = FeedMessage.parseFrom(url.openStream());
+    //FeedMessage feed = FeedMessage.parseFrom(url.openStream());
+    
+    InputStream data = null;    
+    if (null != _apiKey && !_apiKey.equals("")) {
+        data = HttpUtils.getData(url.toString(),"Authorization","apikey " + _apiKey);
+    } else {
+        data = HttpUtils.getData(url.toString());
+    }
+    if (data == null) { 
+        throw new RuntimeException("Failed to get data from url " + url); 
+    } 
+    FeedMessage feed = FeedMessage.parseFrom(data); 
 
     boolean hadUpdate = processDataset(feed);
 
@@ -170,6 +186,7 @@ public class VisualizerService {
       if (vehicleId == null) {
         continue;
       }
+      String vehicleLabel = getVehicleLabel(vehicle);
       _vehicleIdsByEntityIds.put(entity.getId(), vehicleId);
       if (!vehicle.hasPosition()) {
         continue;
@@ -177,6 +194,7 @@ public class VisualizerService {
       Position position = vehicle.getPosition();
       Vehicle v = new Vehicle();
       v.setId(vehicleId);
+      v.setLabel(vehicleLabel);
       v.setLat(position.getLatitude());
       v.setLon(position.getLongitude());
       v.setLastUpdate(System.currentTimeMillis());
@@ -219,6 +237,19 @@ public class VisualizerService {
     return desc.getId();
   }
 
+  private String getVehicleLabel(VehiclePosition vehicle) {
+    if (!vehicle.hasVehicle()) {
+      return null;
+    }
+    TripDescriptor trip = vehicle.getTrip();
+    //System.out.println(trip);
+    if (!trip.hasRouteId()) {
+      return null;
+    }
+    return trip.getRouteId();
+  }
+  
+  
   private void updateRefreshInterval() {
     long t = System.currentTimeMillis();
     if (_mostRecentRefresh != -1) {
@@ -281,4 +312,5 @@ public class VisualizerService {
       }
     }
   }
+
 }

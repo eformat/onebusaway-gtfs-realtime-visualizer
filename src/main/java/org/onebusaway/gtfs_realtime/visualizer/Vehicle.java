@@ -16,43 +16,53 @@
 package org.onebusaway.gtfs_realtime.visualizer;
 
 public class Vehicle {
-  private String id;
+    private String id;
 
-  private double lat;
+    private String label;
 
-  private double lon;
-  
-  private long lastUpdate;  
+    private double lat;
 
-  public String getId() {
-    return id;
-  }
+    private double lon;
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    private long lastUpdate;
 
-  public double getLat() {
-    return lat;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setLat(double lat) {
-    this.lat = lat;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public double getLon() {
-    return lon;
-  }
+    public String getLabel() {
+        return label;
+    }
 
-  public void setLon(double lon) {
-    this.lon = lon;
-  }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-  public long getLastUpdate() {
-    return lastUpdate;
-  }
+    public double getLat() {
+        return lat;
+    }
 
-  public void setLastUpdate(long lastUpdate) {
-    this.lastUpdate = lastUpdate;
-  }
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 }
